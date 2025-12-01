@@ -1,0 +1,17 @@
+---
+- name: Installer et configurer Nginx
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Installer le paquet Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    # On remplace le module "service" (qui requiert systemd)
+    # par une commande directe compatible Docker.
+    - name: Démarrer Nginx (Mode compatibilité Conteneur)
+      shell: /etc/init.d/nginx start
+      # Cette ligne empêche Ansible de planter si Nginx tourne déjà
+      ignore_errors: yes
